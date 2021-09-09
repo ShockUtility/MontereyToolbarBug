@@ -9,13 +9,48 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView {
+            ScrollViewReader { scrollProxy in
+                List {
+                    ForEach([1,2,3], id: \.self) { id in
+                        NavigationLink("Profile \(id)", destination: ProfileView())
+                    }
+                }
+                .navigationTitle("Profile List")
+                .toolbar {
+                    ToolbarItemGroup(placement: .confirmationAction, content: {
+                        Button(action: {
+                            print("Settings...")
+                        }) {
+                            Image(systemName: "gearshape.fill")
+                        }
+                        #if os(macOS)
+                        Button(action: {
+                            NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+                        }, label: {
+                            Image(systemName: "sidebar.left")
+                        })
+                        #endif
+                    })
+                }
+            }
+        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct ProfileView: View {
+    var body: some View {
+        ZStack {
+            VStack {
+                Text("ProfileView")
+            }
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .confirmationAction, content: {
+                Button("Save", action: { // <<<------------- Error
+                    print("Save...")
+                })
+            })
+        }
     }
 }
